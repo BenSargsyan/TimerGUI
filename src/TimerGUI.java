@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 public class TimerGUI implements ActionListener
 {
     boolean end=false;
+    boolean isPressed=true;
     JFrame jf;
     JLabel jl;
     JTextField jMinutes;
@@ -31,6 +32,7 @@ public class TimerGUI implements ActionListener
          start.addActionListener(this);
 
          reset.setBounds(150,80,80,50);
+         reset.setFocusable(false);
          reset.setVisible(true);
          reset.addActionListener(this);
 
@@ -58,9 +60,9 @@ public class TimerGUI implements ActionListener
             @Override
             public void keyPressed(KeyEvent k) {
                 if ((k.getKeyChar() >= '0' && k.getKeyChar() <= '9' )|| k.getKeyChar() == 8) {
-                    jMinutes.setEditable(true);
+                    jSeconds.setEditable(true);
                 } else {
-                    jMinutes.setEditable(false);
+                    jSeconds.setEditable(false);
                     jl.setText("Invalid Input Please Enter only Integer Numbers");
                 }
             }
@@ -81,17 +83,21 @@ public class TimerGUI implements ActionListener
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==start)
         {
-            end=false;
-            mins=Integer.parseInt(jMinutes.getText());
-            secs=Integer.parseInt(jSeconds.getText());
-            countdown(mins,secs);
+                end=false;
+            if(isPressed) {
+                isPressed=false;
+                end = false;
+                mins = Integer.parseInt(jMinutes.getText());
+                secs = Integer.parseInt(jSeconds.getText());
+                countdown(mins, secs);
+            }
         }
         if(e.getSource()==reset){
+                mins = 0;
+                secs = 0;
+                jl.setText("0:0:0");
+                end = true;
 
-            mins=0;
-            secs=0;
-            jl.setText("0:0:0");
-            end=true;
         }
     }
 
@@ -150,6 +156,7 @@ public class TimerGUI implements ActionListener
                 }
                 if(end)
                 {
+                    isPressed=true;
                     return;
                 }
                 for (int i = 0; i < 10000; ++i) {
@@ -160,6 +167,8 @@ public class TimerGUI implements ActionListener
                     }
                     Toolkit.getDefaultToolkit().beep();
                 }
+
+                isPressed=true;
             }
         });
         t.start();
